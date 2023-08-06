@@ -69,3 +69,32 @@ export async function singIn(req, res) {
     }
 }
 
+export async function getUser(req, res){
+    const {user} = res.locals;
+    try {
+
+        const aboutUser = await db.query(`SELECT users.id, users.name, SUM(urls."visitCount") AS "visitCount" 
+        FROM users
+        JOIN urls ON users.email = urls."emailUser"
+        WHERE users.id =$1
+        GROUP BY users.id, users.name;`, [user.id])
+
+      
+
+        const aboutUrl = await db.query(`SELECT urls.id, urls."shortUrl", urls.url, urls."visitCount"
+        FROM urls WHERE urls."emailUser" = $1`, [user.email] )
+
+      
+
+        const userInfo = {
+            ...aboutUser.rows[0],
+            shortenedUrls: aboutUrl.rows,
+          }
+
+        console.log(userInfo)
+
+        res.send(userInfo)
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}

@@ -50,7 +50,7 @@ export async function openUrl(req, res){
         }
 
 
-        await db.query(`UPDATE urls SET count= count +1 WHERE "shortUrl"=$1;`, [shortUrl]);
+        await db.query(`UPDATE urls SET "visitCount"= "visitCount" +1 WHERE "shortUrl"=$1;`, [shortUrl]);
         
         res.redirect(shortUrl);
 
@@ -78,6 +78,7 @@ export async function deleteUrl(req, res){
         await db.query(`DELETE FROM urls WHERE id =$1`, [searchUrl.rows[0].id])
         res.sendStatus(204);
     } catch (err) {
-        
+        res.send(err);
     }
 }
+
