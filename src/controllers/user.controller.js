@@ -45,7 +45,7 @@ export async function singIn(req, res) {
     try {
         const searchEmail = await db.query(`SELECT * FROM users WHERE email = $1`, [email]);
         if (!searchEmail.rowCount > 0) {
-            res.status(404).send("e-mail não cadastrado")
+            res.status(401).send("e-mail não cadastrado")
             return
         }
 
@@ -55,7 +55,10 @@ export async function singIn(req, res) {
             console.log("oi")
             const date = new Date();
             await db.query(`INSERT INTO sessions ("token", "date", "userId") VALUES ($1, $2, $3)`, [token, date, userId])
-            res.status(200).send(token)
+            const meuToken = {
+                token: token
+            }
+            res.status(200).send(meuToken)
         } else {
             res.status(401).send("senhas incorreta");
         }
@@ -65,3 +68,4 @@ export async function singIn(req, res) {
         res.send(err);
     }
 }
+
