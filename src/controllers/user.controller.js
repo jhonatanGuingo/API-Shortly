@@ -13,6 +13,7 @@ export async function signUp(req, res) {
         password,
         confirmPassword
     } = req.body;
+
     const hash = bcrypt.hashSync(password, 10);
 
     if (password != confirmPassword) {
@@ -48,11 +49,12 @@ export async function singIn(req, res) {
             return
         }
 
+        const userId = searchEmail.rows[0].id;
         if (searchEmail.rows[0].password && bcrypt.compareSync(password, searchEmail.rows[0].password)) {
             const token = uuid();
             console.log("oi")
             const date = new Date();
-            await db.query(`INSERT INTO sessions ("token", "date") VALUES ($1, $2)`, [token, date])
+            await db.query(`INSERT INTO sessions ("token", "date", "userId") VALUES ($1, $2, $3)`, [token, date, userId])
             res.status(200).send(token)
         } else {
             res.status(401).send("senhas incorreta");
