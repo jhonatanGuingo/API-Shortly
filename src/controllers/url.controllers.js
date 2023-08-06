@@ -60,5 +60,24 @@ export async function openUrl(req, res){
 }
 
 export async function deleteUrl(req, res){
-    
+    const {user} = res.locals;
+    const {id} = req.params;
+    try {
+        const searchUrl = await db.query(`SELECT * FROM urls WHERE id = $1`, [id]);
+        console.log(searchUrl)
+        if (!searchUrl.rowCount > 0) {
+            res.status(404).send('URL não encontrada')
+            return
+        }
+
+        if (user.email != searchUrl.rows[0].emailUser){
+            res.status(401).send('a URL não pertence ao usuario');
+            return
+        }
+
+        await db.query(`DELETE FROM urls WHERE id =$1`, [searchUrl.rows[0].id])
+        res.sendStatus(204);
+    } catch (err) {
+        
+    }
 }
