@@ -15,7 +15,7 @@ export async function postUrl(req, res){
         }
         res.status(201).send(response);
     } catch (err) {
-        res.send(err);
+        res.status(500).send(err.message);
     }
 }
 
@@ -27,15 +27,22 @@ export async function getUrl(req, res) {
     try {
   
         const searchUrl = await db.query(`SELECT * FROM urls WHERE id = $1`, [id]);
-        console.log(searchUrl)
+       
         if (!searchUrl.rowCount > 0) {
             res.status(404).send('URL não encontrada')
             return
         }
-        delete searchUrl.rows[0].emailUser;
-        res.status(200).send(searchUrl.rows[0])
+ 
+        const response = {
+            id: searchUrl.rows[0].id,
+            shortUrl: searchUrl.rows[0].shortUrl,
+            url: searchUrl.rows[0].url
+        }
+
+        res.status(200).json(response)
+
     } catch (err) {
-        res.send(err);
+        res.status(500).send(err.message);
     }
 
 }
@@ -52,10 +59,10 @@ export async function openUrl(req, res){
 
         await db.query(`UPDATE urls SET "visitCount"= "visitCount" +1 WHERE "shortUrl"=$1;`, [shortUrl]);
         
-        res.redirect(shortUrl);
+        res.status(302).redirect(shortUrl);
 
     } catch (err) {
-        res.send(err);
+        res.status(500).send(err.message);
     }
 }
 
@@ -78,7 +85,7 @@ export async function deleteUrl(req, res){
         await db.query(`DELETE FROM urls WHERE id =$1`, [searchUrl.rows[0].id])
         res.sendStatus(204);
     } catch (err) {
-        res.send(err);
+        res.status(500).send(err.message);
     }
 }
 

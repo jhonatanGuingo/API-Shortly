@@ -32,7 +32,7 @@ export async function signUp(req, res) {
 
         res.sendStatus(201)
     } catch (err) {
-        res.send(err);
+        res.status(500).send(err.message);
     }
 }
 
@@ -53,8 +53,7 @@ export async function singIn(req, res) {
         if (searchEmail.rows[0].password && bcrypt.compareSync(password, searchEmail.rows[0].password)) {
             const token = uuid();
             console.log("oi")
-            const date = new Date();
-            await db.query(`INSERT INTO sessions ("token", "date", "userId") VALUES ($1, $2, $3)`, [token, date, userId])
+            await db.query(`INSERT INTO sessions ("token", "userId") VALUES ($1, $2)`, [token, userId])
             const meuToken = {
                 token: token
             }
@@ -65,7 +64,7 @@ export async function singIn(req, res) {
 
 
     } catch (err) {
-        res.send(err);
+        res.status(500).send(err.message);
     }
 }
 
