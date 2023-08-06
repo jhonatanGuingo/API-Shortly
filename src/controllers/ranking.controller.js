@@ -6,9 +6,9 @@ export async function ranking(req, res){
         COUNT(urls.url) AS "linksCount",
         SUM(urls."visitCount") AS "visitCount"
         FROM users
-        LEFT JOIN urls ON urls."emailUser" = users.email
-        GROUP BY users.name, users.id, urls."visitCount"
-        ORDER BY "visitCount" LIMIT 10
+        JOIN urls ON urls."emailUser" = users.email
+        GROUP BY users.name, users.id
+        ORDER BY "visitCount" DESC LIMIT 10
         ;`);
 
         res.status(200).send(ranking.rows)
