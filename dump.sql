@@ -5,7 +5,7 @@
 -- Dumped from database version 14.8 (Ubuntu 14.8-0ubuntu0.22.04.1)
 -- Dumped by pg_dump version 15.3
 
--- Started on 2023-08-06 13:16:09
+-- Started on 2023-08-06 17:17:55
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -38,8 +38,8 @@ SET default_table_access_method = heap;
 CREATE TABLE public.sessions (
     id integer NOT NULL,
     token character varying(100) NOT NULL,
-    date timestamp without time zone NOT NULL,
-    "userId" integer
+    "userId" integer,
+    "createdAt" timestamp without time zone DEFAULT now()
 );
 
 
@@ -58,7 +58,7 @@ CREATE SEQUENCE public.sessions_id_seq
 
 
 --
--- TOC entry 3336 (class 0 OID 0)
+-- TOC entry 3340 (class 0 OID 0)
 -- Dependencies: 211
 -- Name: sessions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -75,7 +75,9 @@ CREATE TABLE public.urls (
     id integer NOT NULL,
     url text NOT NULL,
     "shortUrl" text NOT NULL,
-    "emailUser" text
+    "emailUser" text,
+    "visitCount" integer DEFAULT 0,
+    "createdAt" timestamp without time zone DEFAULT now()
 );
 
 
@@ -94,7 +96,7 @@ CREATE SEQUENCE public.urls_id_seq
 
 
 --
--- TOC entry 3337 (class 0 OID 0)
+-- TOC entry 3341 (class 0 OID 0)
 -- Dependencies: 213
 -- Name: urls_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -111,7 +113,8 @@ CREATE TABLE public.users (
     id integer NOT NULL,
     name text NOT NULL,
     email text NOT NULL,
-    password text NOT NULL
+    password text NOT NULL,
+    "createdAt" timestamp without time zone DEFAULT now()
 );
 
 
@@ -130,7 +133,7 @@ CREATE SEQUENCE public.users_id_seq
 
 
 --
--- TOC entry 3338 (class 0 OID 0)
+-- TOC entry 3342 (class 0 OID 0)
 -- Dependencies: 209
 -- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
@@ -139,7 +142,7 @@ ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
 
 
 --
--- TOC entry 3180 (class 2604 OID 57413)
+-- TOC entry 3181 (class 2604 OID 57413)
 -- Name: sessions id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -147,7 +150,7 @@ ALTER TABLE ONLY public.sessions ALTER COLUMN id SET DEFAULT nextval('public.ses
 
 
 --
--- TOC entry 3181 (class 2604 OID 57439)
+-- TOC entry 3183 (class 2604 OID 57439)
 -- Name: urls id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -163,7 +166,7 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 
 
 --
--- TOC entry 3187 (class 2606 OID 57415)
+-- TOC entry 3191 (class 2606 OID 57415)
 -- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -172,7 +175,7 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- TOC entry 3189 (class 2606 OID 57443)
+-- TOC entry 3193 (class 2606 OID 57443)
 -- Name: urls urls_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -181,7 +184,7 @@ ALTER TABLE ONLY public.urls
 
 
 --
--- TOC entry 3183 (class 2606 OID 57396)
+-- TOC entry 3187 (class 2606 OID 57396)
 -- Name: users users_email_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -190,7 +193,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 3185 (class 2606 OID 57394)
+-- TOC entry 3189 (class 2606 OID 57394)
 -- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -199,7 +202,7 @@ ALTER TABLE ONLY public.users
 
 
 --
--- TOC entry 3190 (class 2606 OID 57416)
+-- TOC entry 3194 (class 2606 OID 57416)
 -- Name: sessions sessions_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -208,7 +211,7 @@ ALTER TABLE ONLY public.sessions
 
 
 --
--- TOC entry 3191 (class 2606 OID 57444)
+-- TOC entry 3195 (class 2606 OID 57444)
 -- Name: urls urls_emailUser_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -216,7 +219,7 @@ ALTER TABLE ONLY public.urls
     ADD CONSTRAINT "urls_emailUser_fkey" FOREIGN KEY ("emailUser") REFERENCES public.users(email);
 
 
--- Completed on 2023-08-06 13:16:09
+-- Completed on 2023-08-06 17:17:55
 
 --
 -- PostgreSQL database dump complete
